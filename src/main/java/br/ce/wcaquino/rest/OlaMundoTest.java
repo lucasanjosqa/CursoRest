@@ -4,6 +4,7 @@ import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.Arrays;
@@ -58,5 +59,17 @@ public class OlaMundoTest {
         assertThat("Maria", not("João"));
         assertThat("Maria", anyOf(is("Maria"), is("Joaquina")));
         assertThat("Joaquina", allOf(startsWith("Joa"), endsWith("ina"), containsString("qui")));
+    }
+
+    @Test
+    public void devoValidarBody() {
+        given()
+                .when()
+                    .get("http://restapi.wcaquino.me:80/ola")
+                .then()
+                    .statusCode(200)
+                    .body(is("Ola Mundo!"))
+                    .body(containsString("Mundo"))
+                    .body(is(not(nullValue())));
     }
 }
