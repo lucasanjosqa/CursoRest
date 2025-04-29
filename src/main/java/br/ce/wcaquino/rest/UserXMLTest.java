@@ -1,24 +1,31 @@
 package br.ce.wcaquino.rest;
 
+import io.restassured.RestAssured;
 import io.restassured.internal.path.xml.NodeImpl;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.util.ArrayList;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 public class UserXMLTest {
 
+    @BeforeClass
+    public static void setUp(){
+        RestAssured.baseURI = "http://restapi.wcaquino.me";
+//      RestAssured.port = 443;
+//      RestAssured.basePath = "/v2";
+    }
+
     @Test
     public void devoTrabalharComXML(){
         given()
+                .log().all()
         .when()
-                .get("https://restapi.wcaquino.me/usersXML/3")
+                .get("/usersXML/3")
         .then()
                 .statusCode(200)
-
                 .rootPath("user")
                 .body(".name", is("Ana Julia"))
                 .body(".@id", is("3"))
@@ -39,7 +46,7 @@ public class UserXMLTest {
     public void devoFazerPesquisasAvancadasComXML(){
         given()
                 .when()
-                .get("https://restapi.wcaquino.me/usersXML")
+                .get("/usersXML")
                 .then()
                 .statusCode(200)
                 .body("users.user.size()", is(3))
@@ -58,7 +65,7 @@ public class UserXMLTest {
         ArrayList<NodeImpl> nomes =
                 given()
                         .when()
-                        .get("https://restapi.wcaquino.me/usersXML")
+                        .get("/usersXML")
                         .then()
                         .statusCode(200)
                         .extract().path("users.user.name.findAll{it.toString().contains('n')}");
@@ -72,7 +79,7 @@ public class UserXMLTest {
     public void devoFazerPesquisasAvancadasComXPath() {
                 given()
                         .when()
-                        .get("https://restapi.wcaquino.me/usersXML")
+                        .get("/usersXML")
                         .then()
                         .statusCode(200)
                         .body(hasXPath("/users/user[@id='1']"))

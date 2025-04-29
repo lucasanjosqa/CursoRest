@@ -7,10 +7,8 @@ import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
