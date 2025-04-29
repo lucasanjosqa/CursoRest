@@ -1,31 +1,50 @@
 package br.ce.wcaquino.rest;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.internal.path.xml.NodeImpl;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import java.util.ArrayList;
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class UserXMLTest {
+
+    public static RequestSpecification reqSpec;
+    public static ResponseSpecification resSpec;
 
     @BeforeClass
     public static void setUp(){
         RestAssured.baseURI = "http://restapi.wcaquino.me";
 //      RestAssured.port = 443;
 //      RestAssured.basePath = "/v2";
+
+        RequestSpecBuilder reqBuilder = new RequestSpecBuilder();
+        reqBuilder.log(LogDetail.ALL);
+        reqSpec = reqBuilder.build();
+
+        ResponseSpecBuilder resBuilder = new ResponseSpecBuilder();
+        resBuilder.expectStatusCode(200);
+        resSpec = resBuilder.build();
+
+        requestSpecification = reqSpec;
+        responseSpecification = resSpec;
     }
 
     @Test
     public void devoTrabalharComXML(){
         given()
-                .log().all()
         .when()
                 .get("/usersXML/3")
         .then()
                 .statusCode(200)
+
                 .rootPath("user")
                 .body(".name", is("Ana Julia"))
                 .body(".@id", is("3"))
@@ -69,7 +88,6 @@ public class UserXMLTest {
                         .then()
                         .statusCode(200)
                         .extract().path("users.user.name.findAll{it.toString().contains('n')}");
-        ;
         Assert.assertEquals(2, nomes.size());
         Assert.assertEquals("Maria Joaquina".toUpperCase(), nomes.get(0).toString().toUpperCase());
         Assert.assertTrue("ANA JULIA".equalsIgnoreCase(nomes.get(1).toString()));
